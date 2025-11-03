@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-- Development server: `http://localhost:5173`
+- Development server: `http://localhost:5180`
 - Build for production: `npm run build`
 - Static preview: `npm run preview`
 - Lint & formatting checks: `npm run lint`
@@ -19,23 +19,23 @@ npm run dev
 
 ```
 frontend/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ components/               # Chatbot, category, accessibility, service UI primitives
-â”‚   â”œâ”€â”€ data/                     # Static service/document fixtures for prototype
-â”‚   â”œâ”€â”€ layout/                   # App shell, header/footer, accessibility context
-â”‚   â”œâ”€â”€ pages/                    # Home (chatbot + navigation) and ServiceDetail templates
-â”‚   â”œâ”€â”€ styles/                   # Design tokens + global styles (sky-blue civic palette)
-â”‚   â”œâ”€â”€ types/                    # Service/document/support channel domain models
-â”‚   â””â”€â”€ utils/                    # Search helpers mapping user queries to guidance content
-â”œâ”€â”€ tests/                        # Vitest suites (chatbot flows, navigation, accessibility)
-â””â”€â”€ vite.config.ts                # Vite + Vitest configuration
+?œâ??€ src/
+??  ?œâ??€ components/               # Chatbot, category, accessibility, service UI primitives
+??  ?œâ??€ data/                     # Static service/document fixtures for prototype
+??  ?œâ??€ layout/                   # App shell, header/footer, accessibility context
+??  ?œâ??€ pages/                    # Home (chatbot + navigation) and ServiceDetail templates
+??  ?œâ??€ styles/                   # Design tokens + global styles (sky-blue civic palette)
+??  ?œâ??€ types/                    # Service/document/support channel domain models
+??  ?”â??€ utils/                    # Search helpers mapping user queries to guidance content
+?œâ??€ tests/                        # Vitest suites (chatbot flows, navigation, accessibility)
+?”â??€ vite.config.ts                # Vite + Vitest configuration
 ```
 
 ## Core User Journeys
 
 1. **Chatbot-Guided Complaint Preparation**
    - `HomePage` renders chatbot input and response components.
-   - Query string matched via `searchServices` util â†’ detailed guidance with online/offline steps and document checklist.
+   - Query string matched via `searchServices` util ??detailed guidance with online/offline steps and document checklist.
 
 2. **Life-Event Navigation**
    - `CategoryGrid` displays cards for senior support, childcare, and disability programs.
@@ -49,9 +49,9 @@ frontend/
 ## Runbook & Preview Checklist
 
 1. `npm install`
-2. `npm run lint` â€” ensure no ESLint violations (jsx-a11y included)
-3. `npm run test` â€” executes chatbot/navigation UX tests and axe audits
-4. `npm run dev` â€” manual QA on:
+2. `npm run lint` ??ensure no ESLint violations (jsx-a11y included)
+3. `npm run test` ??executes chatbot/navigation UX tests and axe audits
+4. `npm run dev` ??manual QA on:
    - Chatbot query returning online/offline steps + document checklist
    - Category card navigation and detail page parity
    - Text size & high-contrast toggles; keyboard traversal through header/nav/controls
@@ -61,4 +61,5 @@ frontend/
 
 - Static guidance data seeded in `src/data/serviceGuidance.ts` for prototyping; replace with API integration in future phases.
 - Audio summary uses Web Speech API when available; fails silently in unsupported environments.
-- Engine requirements: Node.js â‰¥ 18 (tested with Vite 5, React 18).
+- Engine requirements: Node.js ??18 (tested with Vite 5, React 18).
+

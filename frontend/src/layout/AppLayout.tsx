@@ -5,7 +5,7 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 import { AccessibilityContext } from './AccessibilityContext'
 import type { TextScale } from './AccessibilityContext'
-import { AccessibilityControls } from '../components/accessibility/AccessibilityControls'
+// 접근성 컨트롤 UI 제거
 import { SectionOptionBar } from '../components/navigation/SectionOptionBar'
 
 const fontSizeMap: Record<TextScale, string> = {
@@ -76,7 +76,6 @@ export const AppLayout = () => {
             <div style={{flex:1}}>
               <SectionOptionBar />
             </div>
-            <AccessibilityControls />
           </div>
         </div>
         <main id="main-content" className={styles.main}>

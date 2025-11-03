@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './SectionOptionBar.module.css'
 
 type SectionInfo = { el: HTMLElement; title: string }
@@ -6,48 +6,55 @@ type SectionInfo = { el: HTMLElement; title: string }
 export const SectionOptionBar = () => {
   const [sections, setSections] = useState<SectionInfo[]>([])
   const [active, setActive] = useState(0)
-  const observerRef = useRef<IntersectionObserver | null>(null)
+  const nodesRef = useRef<HTMLElement[]>([])
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'))
+    nodesRef.current = nodes
     const mapped = nodes.map((el, i) => ({
       el,
       title: el.getAttribute('data-title') || el.id || `섹션 ${i + 1}`,
     }))
     setSections(mapped)
 
-    observerRef.current?.disconnect()
-    const mid = (entry: IntersectionObserverEntry) => {
-      const r = entry.boundingClientRect
-      const vh = window.innerHeight || document.documentElement.clientHeight
-      return (r.top + r.bottom) / 2 / vh
+    const handleScroll = () => {
+      const headerHVar = getComputedStyle(document.documentElement).getPropertyValue('--header-h')
+      const headerH = parseInt(headerHVar || '0', 10) || 0
+      const offset = headerH + 8
+      let idx = 0
+      for (let i = 0; i < nodesRef.current.length; i++) {
+        const rect = nodesRef.current[i].getBoundingClientRect()
+        if (rect.top - offset <= 1) idx = i
+      }
+      setActive(idx)
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => Math.abs(0.5 - mid(a)) - Math.abs(0.5 - mid(b)))
-        if (visible[0]) {
-          const idx = nodes.indexOf(visible[0].target as HTMLElement)
-          if (idx >= 0) setActive(idx)
-        }
-      },
-      { threshold: [0.25, 0.5, 0.75] },
-    )
-    nodes.forEach((n) => io.observe(n))
-    observerRef.current = io
-    return () => io.disconnect()
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
   }, [])
+
+  const focusSection = (el: HTMLElement | undefined) => {
+    if (!el) return
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
+    el.focus({ preventScroll: true })
+  }
 
   const onClick = (idx: number) => {
     const target = sections[idx]?.el
+    setActive(idx)
     target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    focusSection(target)
   }
 
   if (sections.length === 0) return null
 
   return (
-    <nav aria-label="옵션 선택 바">
+    <nav aria-label="섹션 선택 탭">
       <div className={styles.bar} role="tablist" aria-orientation="horizontal">
         {sections.map((s, i) => (
           <button
@@ -56,7 +63,7 @@ export const SectionOptionBar = () => {
             className={styles.chip}
             role="tab"
             aria-selected={i === active}
-            aria-label={`${s.title}로 이동`}
+            aria-label={`${s.title} 이동`}
             onClick={() => onClick(i)}
           >
             {s.title}
