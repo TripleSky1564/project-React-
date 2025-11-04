@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ChatbotInput } from './ChatbotInput'
-import { ChatbotGuidance } from './ChatbotGuidance'
+import { ChatMessengerInput } from './ChatMessengerInput'
+import { ChatbotConversation } from './ChatbotConversation'
 import styles from './ChatbotWidget.module.css'
 import mascotFace from '../../img/logo_face.png'
 import { guidanceContent } from '../../data/serviceGuidance'
@@ -145,10 +145,15 @@ export const ChatbotWidget = () => {
 
   const detail: ServiceGuidanceDetail | null = useMemo(() => {
     if (!selectedServiceId) return null
+    // TODO: AI 모델 연동 시에는 응답으로 받은 상세 정보를 그대로 사용하도록
+    // 현재의 로컬 데이터 조회(getServiceDetail)를 대체하세요.
     return getServiceDetail(selectedServiceId, guidanceContent)
   }, [selectedServiceId])
 
   const handleSearch = useCallback((input: string) => {
+    // TODO: 향후 AI 챗봇 API와 연동할 때는 아래 로컬 검색 로직을
+    // fetch('/api/chatbot', { body: input }) 같은 비동기 호출로 대체하고,
+    // 응답으로 받은 안내 데이터를 setStatus/setSelectedServiceId/setSuggestions에 연결하세요.
     if (!input) {
       setStatus('idle')
       setSelectedServiceId(null)
@@ -243,8 +248,18 @@ export const ChatbotWidget = () => {
             </button>
           </header>
           <div className={styles.content}>
+            <div className={styles.responseArea}>
+              <ChatbotConversation
+                status={status}
+                query={query}
+                detail={detail}
+                suggestions={suggestions}
+                onReset={handleReset}
+                onSelectSuggestion={handleSuggestionSelect}
+              />
+            </div>
             <div className={styles.inputArea}>
-              <ChatbotInput
+              <ChatMessengerInput
                 value={query}
                 onChange={setQuery}
                 onSubmit={(value) => {
@@ -252,16 +267,6 @@ export const ChatbotWidget = () => {
                   handleSearch(value)
                 }}
                 suggestion={buildGuidanceSearchSuggestion(query)}
-              />
-            </div>
-            <div className={styles.responseArea}>
-              <ChatbotGuidance
-                status={status}
-                query={query}
-                detail={detail}
-                suggestions={suggestions}
-                onReset={handleReset}
-                onSelectSuggestion={handleSuggestionSelect}
               />
             </div>
           </div>

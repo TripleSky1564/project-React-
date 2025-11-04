@@ -154,15 +154,42 @@
   background-color: var(--color-primary-sky-light);
 }
 
+/* 체크리스트 CTA 섹션 */
+.ctaRow {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+  width: 100%;
+}
+
+/* 초보자도 색상만 바꿔서 재사용할 수 있도록 캡슐형 버튼 스타일 */
+.ctaButton {
+  min-width: min(420px, 100%);
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #5ab0ff 0%, #1d7ccd 100%);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 16px 32px rgba(28, 99, 176, 0.28);
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  text-align: center;
+}
+
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  outline: none;
+}
+
 @media (min-width: 960px) {
   .header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-  }
-
-  .stepGroup {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .documentList {
@@ -171,5 +198,13 @@
 
   .channelList {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stepGroup {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ctaRow {
+    grid-column: 1 / -1;
   }
 }

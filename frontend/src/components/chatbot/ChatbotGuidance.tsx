@@ -1,6 +1,6 @@
+import { useNavigate } from 'react-router-dom'
 import type { ServiceGuidance, ServiceGuidanceDetail } from '../../types/guidance'
 import styles from './ChatbotGuidance.module.css'
-import { useNavigate } from 'react-router-dom'
 
 type GuidanceStatus = 'idle' | 'success' | 'not-found'
 
@@ -13,6 +13,8 @@ type ChatbotGuidanceProps = {
   onSelectSuggestion: (serviceId: string) => void
 }
 
+// NOTE: 메인 화면에 정적으로 노출되는 챗봇 안내 카드 컴포넌트입니다.
+// 실시간 대화 느낌이 필요한 위젯(우측 하단)과는 별도로 유지합니다.
 export const ChatbotGuidance = ({
   status,
   query,
@@ -25,6 +27,7 @@ export const ChatbotGuidance = ({
   if (status === 'idle') {
     return (
       <div className={styles.placeholder}>
+        {/* 아직 검색하지 않은 상태: 예시 질문을 제공해서 방향을 제시합니다. */}
         <p>궁금한 민원을 입력하면 맞춤 안내를 보여드릴게요.</p>
         <ul>
           <li>“기초연금 신청 서류”</li>
@@ -38,10 +41,11 @@ export const ChatbotGuidance = ({
   if (status === 'not-found') {
     return (
       <div className={styles.empty}>
+        {/* 검색 결과가 없을 때는 메시지와 재검색 버튼만 깔끔하게 보여줍니다. */}
         <h3>해당 민원 정보를 찾을 수 없습니다</h3>
         <p>
-          <strong>{query}</strong>와(과) 비슷한 공공복지 민원 정보를 찾을 수 없었습니다.
-          다른 표현으로 다시 검색해 보시겠어요?
+          <strong>{query}</strong>와(과) 비슷한 공공복지 민원 정보를 찾을 수 없었습니다. 다른 표현으로
+          다시 검색해 보시겠어요?
         </p>
         <button type="button" onClick={onReset} className={styles.resetButton}>
           다른 민원 검색하기
@@ -57,6 +61,7 @@ export const ChatbotGuidance = ({
   )
 
   const formatDocumentList = (documentIds: string[] = []) =>
+    // 각 단계에서 필요한 서류를 보기 좋게 쉼표로 묶어서 보여줍니다.
     documentIds.map((id) => documentNameMap.get(id) ?? id).join(', ')
 
   return (
@@ -117,12 +122,16 @@ export const ChatbotGuidance = ({
             ))}
           </ol>
         </article>
-        <button
-          type="button"
-          onClick={() => navigate(`/services/${detail.id}/checklist`)}
-        >
-          필수 서류 체크리스트 안내
-        </button>
+        <div className={styles.ctaRow}>
+          {/* 상세 체크리스트로 이동하는 메인 버튼 (가운데 정렬) */}
+          <button
+            type="button"
+            onClick={() => navigate(`/services/${detail.id}/checklist`)}
+            className={styles.ctaButton}
+          >
+            필수 서류 체크리스트 보기
+          </button>
+        </div>
       </section>
 
       <section className={styles.section}>
