@@ -42,8 +42,8 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: min(420px, calc(100vw - 32px));
-  max-height: min(640px, calc(100vh - 64px));
+  width: min(480px, calc(100vw - 48px));
+  max-height: min(720px, calc(100vh - 80px));
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 18px 42px rgba(25, 36, 54, 0.22);

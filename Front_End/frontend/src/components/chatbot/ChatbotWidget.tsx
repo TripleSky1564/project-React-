@@ -1,39 +1,68 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ChatMessengerInput } from './ChatMessengerInput'
 import { ChatbotConversation } from './ChatbotConversation'
 import styles from './ChatbotWidget.module.css'
 import mascotFace from '../../img/logo_face.png'
-import { guidanceContent } from '../../data/serviceGuidance'
-import {
-  buildGuidanceSearchSuggestion,
-  getServiceDetail,
-  searchServices,
-} from '../../utils/guidanceSearch'
-import type { ServiceGuidanceDetail } from '../../types/guidance'
 
-type ChatbotStatus = 'idle' | 'success' | 'not-found'
+type ChatMessage = {
+  id: string
+  sender: 'user' | 'assistant'
+  content: string
+  tone?: 'default' | 'highlight'
+  isStreaming?: boolean
+}
 
 type PersistedState = {
   open: boolean
-  query: string
-  status: ChatbotStatus
-  selectedServiceId: string | null
+  inputValue: string
+  messages: ChatMessage[]
 }
 
 const STORAGE_KEY = 'chatbotWidgetState'
-const defaultSuggestions = guidanceContent.services.slice(0, 3)
+const API_ENDPOINT =
+  import.meta.env.VITE_CHATBOT_ENDPOINT && import.meta.env.VITE_CHATBOT_ENDPOINT.trim().length > 0
+    ? import.meta.env.VITE_CHATBOT_ENDPOINT.trim()
+    : '/api/chatbot'
+
+const generateSessionId = () => Math.floor(Date.now() % 1_000_000_000)
+
+const sanitizeMessages = (raw: unknown): ChatMessage[] => {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((entry, index) => {
+      if (!entry || typeof entry !== 'object') return null
+      const sender = (entry as { sender?: unknown }).sender
+      const content = (entry as { content?: unknown }).content
+      const tone = (entry as { tone?: unknown }).tone
+      const id = (entry as { id?: unknown }).id
+      if ((sender !== 'user' && sender !== 'assistant') || typeof content !== 'string') {
+        return null
+      }
+      const normalizedTone = tone === 'highlight' ? 'highlight' : undefined
+      const normalizedId =
+        typeof id === 'string' && id.trim().length > 0 ? id : `restored-${index}`
+      return {
+        id: normalizedId,
+        sender,
+        content,
+        ...(normalizedTone ? { tone: normalizedTone } : {}),
+      }
+    })
+    .filter((message): message is ChatMessage => Boolean(message))
+}
 
 // 레이아웃 레벨에 고정돼 새로고침이나 새 탭에서도 이어지는 챗봇 위젯입니다.
 // 트리거 버튼 디자인을 바꾸려면 하단 JSX의 <button> 부분을, 로직을 바꾸려면 아래 상태 훅들을 편집하세요.
 export const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const [status, setStatus] = useState<ChatbotStatus>('idle')
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
-  const [suggestions, setSuggestions] = useState(defaultSuggestions)
+  const [inputValue, setInputValue] = useState('')
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [isStreaming, setIsStreaming] = useState(false)
   const dialogRef = useRef<HTMLElement | null>(null)
   const skipPersistRef = useRef(false)
+  const sessionRef = useRef<number>(generateSessionId())
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
@@ -57,63 +86,21 @@ export const ChatbotWidget = () => {
   const applyPersistedState = useCallback((raw: string | null) => {
     skipPersistRef.current = true
     try {
-      if (!raw) {
-        setIsOpen(false)
-        setQuery('')
-        setStatus('idle')
-        setSelectedServiceId(null)
-        setSuggestions(defaultSuggestions)
-        return
-      }
-
-      const parsed = JSON.parse(raw) as Partial<PersistedState> | null
-      if (!parsed) {
-        setIsOpen(false)
-        setQuery('')
-        setStatus('idle')
-        setSelectedServiceId(null)
-        setSuggestions(defaultSuggestions)
-        return
-      }
-
-      const nextOpen = Boolean(parsed.open)
-      const nextQuery = typeof parsed.query === 'string' ? parsed.query : ''
-      const nextStatus =
-        parsed.status === 'success' || parsed.status === 'not-found' ? parsed.status : 'idle'
-      const nextSelected =
-        typeof parsed.selectedServiceId === 'string' ? parsed.selectedServiceId : null
+      const parsed = raw ? (JSON.parse(raw) as Partial<PersistedState> | null) : null
+      const nextOpen = Boolean(parsed?.open)
+      const nextInputValue =
+        parsed && typeof parsed.inputValue === 'string' ? parsed.inputValue : ''
+      const nextMessages = sanitizeMessages(parsed?.messages)
 
       setIsOpen(nextOpen)
-      setQuery(nextQuery)
-      setSelectedServiceId(nextSelected)
-      setStatus(nextStatus)
-
-      if (nextQuery) {
-        const found = searchServices(nextQuery, guidanceContent)
-        if (found.length === 0) {
-          setSuggestions(defaultSuggestions)
-          setStatus('not-found')
-          setSelectedServiceId(null)
-        } else {
-          setSuggestions(found)
-          if (!nextSelected || !found.some((service) => service.id === nextSelected)) {
-            setSelectedServiceId(found[0].id)
-          }
-          if (nextStatus !== 'success') {
-            setStatus('success')
-          }
-        }
-      } else {
-        setSuggestions(defaultSuggestions)
-        setSelectedServiceId(null)
-        setStatus('idle')
-      }
+      setInputValue(nextInputValue)
+      setMessages(nextMessages)
+      setIsStreaming(false)
     } catch {
       setIsOpen(false)
-      setQuery('')
-      setStatus('idle')
-      setSelectedServiceId(null)
-      setSuggestions(defaultSuggestions)
+      setInputValue('')
+      setMessages([])
+      setIsStreaming(false)
     } finally {
       setTimeout(() => {
         skipPersistRef.current = false
@@ -143,48 +130,153 @@ export const ChatbotWidget = () => {
     return () => window.removeEventListener('storage', handleStorage)
   }, [applyPersistedState])
 
-  const detail: ServiceGuidanceDetail | null = useMemo(() => {
-    if (!selectedServiceId) return null
-    // TODO: AI 모델 연동 시에는 응답으로 받은 상세 정보를 그대로 사용하도록
-    // 현재의 로컬 데이터 조회(getServiceDetail)를 대체하세요.
-    return getServiceDetail(selectedServiceId, guidanceContent)
-  }, [selectedServiceId])
-
-  const handleSearch = useCallback((input: string) => {
-    // TODO: 향후 AI 챗봇 API와 연동할 때는 아래 로컬 검색 로직을
-    // fetch('/api/chatbot', { body: input }) 같은 비동기 호출로 대체하고,
-    // 응답으로 받은 안내 데이터를 setStatus/setSelectedServiceId/setSuggestions에 연결하세요.
-    if (!input) {
-      setStatus('idle')
-      setSelectedServiceId(null)
-      setSuggestions(guidanceContent.services.slice(0, 3))
-      return
-    }
-
-    const found = searchServices(input, guidanceContent)
-    setSuggestions(found)
-
-    if (found.length === 0) {
-      setStatus('not-found')
-      setSelectedServiceId(null)
-      return
-    }
-
-    setSelectedServiceId(found[0].id)
-    setStatus('success')
-  }, [])
-
   const handleReset = useCallback(() => {
-    setQuery('')
-    setStatus('idle')
-    setSelectedServiceId(null)
-    setSuggestions(guidanceContent.services.slice(0, 3))
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+    setMessages([])
+    setInputValue('')
+    setIsStreaming(false)
+    sessionRef.current = generateSessionId()
   }, [])
 
-  const handleSuggestionSelect = useCallback((serviceId: string) => {
-    setSelectedServiceId(serviceId)
-    setStatus('success')
-  }, [])
+  const streamChat = useCallback(
+    async (rawInput: string) => {
+      const question = rawInput.trim()
+      if (!question) return
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+
+      const userMessage: ChatMessage = {
+        id: `user-${Date.now()}`,
+        sender: 'user',
+        content: question,
+      }
+
+      const assistantId = `assistant-${Date.now()}`
+
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        { id: assistantId, sender: 'assistant', content: '', isStreaming: true },
+      ])
+      setInputValue('')
+      setIsStreaming(true)
+
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
+          },
+          body: JSON.stringify({
+            session_id: sessionRef.current,
+            input_text: question,
+          }),
+          signal: controller.signal,
+        })
+
+        if (!response.ok || !response.body) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder('utf-8')
+        let buffer = ''
+        let assistantText = ''
+        let streamEnded = false
+
+        const processBuffer = () => {
+          const lines = buffer.split(/\r?\n/)
+          buffer = lines.pop() ?? ''
+          for (const line of lines) {
+            const trimmed = line.trim()
+            if (!trimmed.startsWith('data:')) continue
+            const payload = trimmed.slice(5).trim()
+            if (!payload) continue
+            if (payload === '[STREAM_END]') {
+              streamEnded = true
+              continue
+            }
+            assistantText += payload
+            setMessages((prev) =>
+              prev.map((message) =>
+                message.id === assistantId
+                  ? { ...message, content: assistantText, isStreaming: true }
+                  : message,
+              ),
+            )
+          }
+        }
+
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
+          buffer += decoder.decode(value, { stream: true })
+          processBuffer()
+          if (streamEnded) break
+        }
+
+        buffer += decoder.decode()
+        processBuffer()
+        const remainder = buffer.trim()
+        if (remainder.startsWith('data:')) {
+          const payload = remainder.slice(5).trim()
+          if (payload === '[STREAM_END]') {
+            streamEnded = true
+          } else if (payload) {
+            assistantText += payload
+            setMessages((prev) =>
+              prev.map((message) =>
+                message.id === assistantId
+                  ? { ...message, content: assistantText, isStreaming: false }
+                  : message,
+              ),
+            )
+          }
+        }
+        buffer = ''
+
+        const finalText =
+          assistantText.trim().length > 0
+            ? assistantText
+            : '응답이 비어있어요. 다른 질문을 시도해 주세요.'
+
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantId
+              ? { ...message, content: finalText, isStreaming: false }
+              : message,
+          ),
+        )
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          setMessages((prev) => prev.filter((message) => message.id !== assistantId))
+          return
+        }
+
+        const fallback = '챗봇 응답을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantId
+              ? { ...message, content: fallback, tone: 'highlight', isStreaming: false }
+              : message,
+          ),
+        )
+      } finally {
+        setIsStreaming(false)
+        abortControllerRef.current = null
+      }
+    },
+    [],
+  )
 
   // 스냅샷을 적용 중인 경우를 제외하고 사용자의 최근 동작을 저장합니다.
   // 저장 주기를 세밀하게 제어하려면 의존성 배열에서 필요한 값만 남겨두거나 throttle을 적용하면 됩니다.
@@ -193,20 +285,45 @@ export const ChatbotWidget = () => {
     if (skipPersistRef.current) return
     const payload: PersistedState = {
       open: isOpen,
-      query,
-      status,
-      selectedServiceId,
+      inputValue,
+      messages: messages.map(({ id, sender, content, tone }) => ({
+        id,
+        sender,
+        content,
+        ...(tone ? { tone } : {}),
+      })),
     }
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
     } catch {
       // ignore persistence errors
     }
-  }, [isOpen, query, status, selectedServiceId])
+  }, [isOpen, inputValue, messages])
+
+  useEffect(() => {
+    if (!isOpen && abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+      setIsStreaming(false)
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, [])
 
   const triggerClassName = isOpen ? `${styles.trigger} ${styles.triggerHidden}` : styles.trigger
 
   if (typeof document === 'undefined') return null
+
+  const helperText =
+    messages.length === 0
+      ? '궁금한 내용을 입력해 주세요. 예: 주민등록 등본 발급 방법'
+      : 'Shift+Enter로 줄바꿈 할 수 있어요.'
 
   return createPortal(
     <>
@@ -250,23 +367,19 @@ export const ChatbotWidget = () => {
           <div className={styles.content}>
             <div className={styles.responseArea}>
               <ChatbotConversation
-                status={status}
-                query={query}
-                detail={detail}
-                suggestions={suggestions}
                 onReset={handleReset}
-                onSelectSuggestion={handleSuggestionSelect}
+                messages={messages}
+                isStreaming={isStreaming}
               />
             </div>
             <div className={styles.inputArea}>
               <ChatMessengerInput
-                value={query}
-                onChange={setQuery}
+                value={inputValue}
+                onChange={setInputValue}
                 onSubmit={(value) => {
-                  setQuery(value)
-                  handleSearch(value)
+                  void streamChat(value)
                 }}
-                suggestion={buildGuidanceSearchSuggestion(query)}
+                suggestion={helperText}
               />
             </div>
           </div>

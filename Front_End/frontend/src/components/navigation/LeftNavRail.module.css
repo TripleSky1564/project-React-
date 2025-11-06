@@ -4,12 +4,17 @@
   gap: 18px;
   padding: 20px;
   width: 100%;
+  position: static;
   background: #ffffff;
   border: 1px solid #dbeafe;
   border-radius: 18px;
   box-shadow: 0 24px 48px rgba(37, 99, 235, 0.08);
-  position: sticky;
-  top: calc(var(--header-h, 80px) + 24px);
+}
+
+@media (max-width: 960px) {
+  .sidebar {
+    display: none;
+  }
 }
 
 .title {

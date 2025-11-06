@@ -16,13 +16,13 @@ export const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <div className={styles.branding}>
+        <Link to="/" className={styles.branding} aria-label="공공복지 도우미 홈으로 이동">
           <img src={logo} alt="공공복지 도우미 로고" className={styles.logo} />
           <div>
             <p className={styles.siteName}>공공복지 도우미</p>
-            <p className={styles.tagline}>민원 서류 준비를 쉽게, 한곳에서</p>
+            <p className={styles.tagline}>두리와 함께해요</p>
           </div>
-        </div>
+        </Link>
         <nav aria-label="주요 메뉴" className={styles.nav}>
           <a href="#chatbot"></a>
           <a href="#life-events"></a>

@@ -97,10 +97,10 @@ export const HomePage = () => {
           {/* 히어로 영역: 서비스 소개와 챗봇 섹션으로 이동하는 링크를 제공합니다.
               텍스트나 강조 색상을 바꾸려면 HomePage.module.css와 함께 조정하세요. */}
           <section className={styles.hero}>
-            <div>
+            <div className={styles.heroContent}>
               <p className={styles.sectionLabel}>공공복지 안내</p>
               <h1 className={styles.heading}>
-                민원 서류 준비 <span className={styles.highlight}>챗봇·안내</span> 도와드릴게요
+                민원 서류 준비 챗봇이 안내해 줄게요
               </h1>
               <p className={styles.description}>
                 궁금한 민원명을 입력하면 온라인·오프라인 준비방법을 한 번에 알려드립니다.
@@ -109,10 +109,7 @@ export const HomePage = () => {
                 챗봇에게 민원 물어보기
               </a>
             </div>
-            <div className={styles.heroCard} aria-hidden="true">
-              <p>기초연금 신청하려면 어떤 서류가 필요할까요?</p>
-              <span>챗봇이 절차·방문방법을 알려줍니다</span>
-            </div>
+            
           </section>
 
 
