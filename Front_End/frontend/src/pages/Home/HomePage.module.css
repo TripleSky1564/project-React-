@@ -159,7 +159,7 @@
 }
 
 @media (max-width: 960px) {
-  /* 작은 화면에서는 좌측 네비를 숨기고 본문을 전체 폭으로 확장합니다. */
+  /* 작은 화면에서는 1열로 재배치해 네비게이션을 본문 위쪽에 노출합니다. */
   .page {
     padding: var(--space-xl) var(--space-md);
   }
@@ -167,10 +167,6 @@
   .layout {
     grid-template-columns: 1fr;
     gap: var(--space-xl);
-  }
-
-  .sidebar {
-    display: none;
   }
 
   .sectionStack {

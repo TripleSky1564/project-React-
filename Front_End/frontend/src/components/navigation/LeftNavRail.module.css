@@ -1,5 +1,5 @@
 .sidebar {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 18px;
   padding: 20px;
@@ -108,16 +108,4 @@
   color: #ffffff;
   border-color: #1d4ed8;
   box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
-}
-
-@media (min-width: 1024px) {
-  .sidebar {
-    display: flex;
-  }
-}
-
-@media (max-width: 960px) {
-  .sidebar {
-    display: none;
-  }
 }
