@@ -1,0 +1,178 @@
+ .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    display: grid;
+    gap: 32px;
+  }
+
+  .header {
+    display: grid;
+    gap: 24px;
+  }
+
+  .pageTitle h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+  }
+
+  .pageTitle p {
+    margin: 0;
+    color: #475569;
+    max-width: 720px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .filterGroup {
+    display: grid;
+    gap: 8px;
+  }
+
+  .filterButtons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filterButton {
+    border-radius: 999px;
+    border: 1px solid #cbd5f5;
+    padding: 8px 18px;
+    background: #fff;
+    color: #1e293b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border 0.2s ease;
+  }
+
+  .filterButtonActive {
+    background: #1d4ed8;
+    color: #fff;
+    border-color: #1d4ed8;
+    box-shadow: 0 12px 24px rgba(29, 78, 216, 0.25);
+  }
+
+  .distanceControl {
+    display: grid;
+    gap: 8px;
+    font-weight: 600;
+    color: #1d4ed8;
+  }
+
+  .content {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .mapSection {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mapFrame {
+    width: 100%;
+    min-height: 360px;
+    border: 1px solid #cfe1ff;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(191, 219, 254, 0.4),
+  rgba(147, 197, 253, 0.4));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1e3a8a;
+    font-weight: 600;
+  }
+
+  .mapHelper {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+  }
+
+  .listSection {
+    display: grid;
+    gap: 16px;
+  }
+
+  .officeCard {
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    background: #ffffff;
+    display: grid;
+    gap: 10px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+  }
+
+  .officeCard header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .officeCard h3 {
+    margin: 0;
+  }
+
+  .badge {
+    border-radius: 8px;
+    padding: 4px 10px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .meta {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .focusButton {
+    width: fit-content;
+    border-radius: 999px;
+    border: 1px solid #2563eb;
+    background: #fff;
+    color: #2563eb;
+    padding: 8px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .focusButton:hover,
+  .focusButton:focus-visible {
+    background: #2563eb;
+    color: #fff;
+  }
+
+  .emptyState {
+    border-radius: 16px;
+    border: 1px dashed #cbd5f5;
+    padding: 32px;
+    text-align: center;
+    color: #475569;
+    display: grid;
+    gap: 8px;
+  }
+
+  /* 작은 화면 대응 */
+  @media (max-width: 960px) {
+    .content {
+      grid-template-columns: 1fr;
+    }
+
+    .mapFrame {
+      min-height: 320px;
+    }
+  }

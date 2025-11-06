@@ -1,0 +1,210 @@
+.placeholder,
+.empty,
+.result {
+  background-color: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-neutral-300);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-subtle);
+}
+
+.placeholder ul {
+  margin: var(--space-md) 0 0;
+  padding-left: 1.2rem;
+  color: var(--color-neutral-500);
+}
+
+.empty h3 {
+  margin-top: 0;
+}
+
+.resetButton {
+  background: none;
+  border: 1px solid var(--color-primary-sky);
+  color: var(--color-primary-sky-dark);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.resetButton:hover,
+.resetButton:focus-visible {
+  background-color: var(--color-primary-sky-light);
+}
+
+.result {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary-sky-dark);
+}
+
+.summary {
+  margin: 0;
+  color: var(--color-neutral-700);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.bulletList {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.stepGroup {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.stepGroup article {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-neutral-300);
+  padding: var(--space-lg);
+  background-color: var(--color-primary-sky-light);
+}
+
+.stepList {
+  margin: var(--space-sm) 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.stepList strong {
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.stepNote {
+  color: var(--color-neutral-500);
+  font-size: var(--font-size-sm);
+  margin: var(--space-xs) 0 0;
+}
+
+.documentList {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.documentList article {
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.documentList h5 {
+  margin: 0 0 var(--space-xs);
+}
+
+.documentMeta {
+  color: var(--color-neutral-500);
+  font-size: var(--font-size-sm);
+}
+
+.channelList {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.channelList article {
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.suggestionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.optionButton {
+  border: 1px solid var(--color-primary-sky);
+  border-radius: 999px;
+  padding: var(--space-xs) var(--space-md);
+  background-color: #fff;
+  color: var(--color-primary-sky-dark);
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.optionButton:hover,
+.optionButton:focus-visible {
+  background-color: var(--color-primary-sky-light);
+}
+
+/* 체크리스트 CTA 섹션 */
+.ctaRow {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+  width: 100%;
+}
+
+/* 초보자도 색상만 바꿔서 재사용할 수 있도록 캡슐형 버튼 스타일 */
+.ctaButton {
+  min-width: min(420px, 100%);
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #5ab0ff 0%, #1d7ccd 100%);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 16px 32px rgba(28, 99, 176, 0.28);
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  text-align: center;
+}
+
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  outline: none;
+}
+
+@media (min-width: 960px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .documentList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .channelList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stepGroup {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ctaRow {
+    grid-column: 1 / -1;
+  }
+}

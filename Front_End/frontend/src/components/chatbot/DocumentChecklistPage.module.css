@@ -1,0 +1,177 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lead {
+  color: #6b7280;
+  margin: 0;
+}
+.summary {
+  color: #374151;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+.secondary {
+  background: #e5e7eb;
+  color: #111827;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.table th,
+.table td {
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.nameCell {
+  font-weight: 600;
+}
+.metaCell {
+  color: #6b7280;
+}
+
+.section {
+  margin-top: 32px;
+  display: grid;
+  gap: 16px;
+}
+
+.sectionHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contactHighlight {
+  margin: 0;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.supportGrid {
+  display: grid;
+  gap: 32px;
+}
+
+.supportList {
+  display: grid;
+  gap: 16px;
+}
+
+.supportCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  background: #ffffff;
+  display: grid;
+  gap: 6px;
+}
+
+.supportCard h3 {
+  margin: 0;
+}
+
+.metaText {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.mapPanel {
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 16px;
+  background: #eff6ff;
+  display: grid;
+  gap: 16px;
+}
+
+.mapHelper {
+  margin: 0;
+  color: #1d4ed8;
+  font-size: 0.9rem;
+}
+
+.mapFrame {
+  border: 1px dashed #93c5fd;
+  border-radius: 12px;
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(147, 197, 253, 0.2),
+      rgba(147, 197, 253, 0.2) 16px,
+      rgba(191, 219, 254, 0.2) 16px,
+      rgba(191, 219, 254, 0.2) 32px
+    );
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e3a8a;
+  font-weight: 600;
+  text-align: center;
+}
+
+.suggestionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.suggestionLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #2563eb;
+  background: #fff;
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.suggestionLink:hover,
+.suggestionLink:focus-visible {
+  background: #2563eb;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .sectionHeading {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+@media (min-width: 960px) {
+  .supportGrid {
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  }
+}
