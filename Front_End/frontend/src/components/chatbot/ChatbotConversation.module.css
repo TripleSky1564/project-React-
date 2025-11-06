@@ -46,24 +46,23 @@
 
 .bubble {
   max-width: min(85%, 360px);
-  padding: var(--space-sm) var(--space-md);
+  padding: 12px 16px;
   border-radius: 18px;
-  border-bottom-left-radius: 6px;
-  box-shadow: 0 20px 32px rgba(27, 47, 82, 0.12);
-  border: 1px solid rgba(19, 41, 75, 0.08);
-  background: #ffffff;
+  background: #f3f5fb;
+  border: 1px solid rgba(19, 41, 75, 0.12);
   display: grid;
-  gap: var(--space-xs);
-  line-height: 1.58;
+  gap: 6px;
+  line-height: 1.52;
+  box-shadow: none;
 }
 
 .assistantBubble {
-  background: #ffffff;
+  background: #f3f5fb;
 }
 
 .highlight {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, #e8f4ff 100%);
-  border-color: rgba(29, 124, 205, 0.25);
+  background: #e7efff;
+  border-color: rgba(29, 124, 205, 0.3);
 }
 
 .userBubble {
@@ -71,8 +70,7 @@
   border-color: transparent;
   color: #fff;
   border-radius: 18px;
-  border-bottom-right-radius: 6px;
-  box-shadow: 0 16px 32px rgba(29, 124, 205, 0.35);
+  box-shadow: none;
 }
 
 .label {
@@ -84,9 +82,9 @@
 
 .title {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
-  color: var(--color-primary-sky-dark, #1d7ccd);
+  color: var(--color-neutral-800);
 }
 
 .body {

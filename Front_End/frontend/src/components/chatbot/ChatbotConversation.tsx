@@ -93,11 +93,11 @@ export const ChatbotConversation = ({
     messages.push({
       id: 'summary',
       sender: 'assistant',
-      tone: 'highlight',
       content: (
         <>
-          <p className={styles.label}>챗봇 추천 민원</p>
-          <h3 className={styles.title}>{detail.title}</h3>
+          <p className={styles.body}>
+            <strong className={styles.title}>{detail.title}</strong> 안내를 찾았어요.
+          </p>
           <p className={styles.body}>{detail.summary}</p>
         </>
       ),
@@ -109,8 +109,8 @@ export const ChatbotConversation = ({
         sender: 'assistant',
         content: (
           <p className={styles.body}>
-            우선, {formatList(detail.eligibilityHighlights)} 주민이라면 지원 대상에 해당할 가능성이
-            높아요.
+            지원 대상에 가까운 분들은 {formatList(detail.eligibilityHighlights)}와 같은 조건을 가진
+            주민이에요.
           </p>
         ),
       })
@@ -121,19 +121,16 @@ export const ChatbotConversation = ({
         id: 'online',
         sender: 'assistant',
         content: (
-          <div>
-            <p className={styles.body}>온라인으로 진행하려면 이런 순서를 따라주시면 좋아요.</p>
+          <>
+            <p className={styles.body}>온라인으로 신청하려면 아래 순서를 따라주세요.</p>
             <ol className={styles.stepList}>
               {onlineSteps.map((step, index) => (
                 <li key={step.title}>
-                  <strong>{index + 1}. {step.title}</strong> — {step.description}
+                  {index + 1}. {step.title} — {step.description}
                 </li>
               ))}
             </ol>
-            {detail.onlineSteps.length > onlineSteps.length ? (
-              <p className={styles.meta}>추가 단계는 자세한 안내에서 이어집니다.</p>
-            ) : null}
-          </div>
+          </>
         ),
       })
     }
@@ -143,22 +140,19 @@ export const ChatbotConversation = ({
         id: 'offline',
         sender: 'assistant',
         content: (
-          <div>
-            <p className={styles.body}>방문 접수도 가능해요. 주요 순서를 짚어드릴게요.</p>
+          <>
+            <p className={styles.body}>방문 접수 시에는 이렇게 준비하시면 돼요.</p>
             <ol className={styles.stepList}>
               {offlineSteps.map((step, index) => (
                 <li key={step.title}>
-                  <strong>{index + 1}. {step.title}</strong> — {step.description}
+                  {index + 1}. {step.title} — {step.description}
                   {step.estimatedTime ? (
-                    <span className={styles.meta}> (예상 소요시간 {step.estimatedTime})</span>
+                    <span className={styles.meta}> (예상 소요 {step.estimatedTime})</span>
                   ) : null}
                 </li>
               ))}
             </ol>
-            {detail.offlineSteps.length > offlineSteps.length ? (
-              <p className={styles.meta}>방문 시 필요한 나머지 절차는 상세 페이지에서 확인하세요.</p>
-            ) : null}
-          </div>
+          </>
         ),
       })
     }
@@ -169,8 +163,8 @@ export const ChatbotConversation = ({
         sender: 'assistant',
         content: (
           <p className={styles.body}>
-            필수 서류는 {formatList(spotlightDocuments)} 등이 있고, 총{' '}
-            {documentNames.length}개를 준비해야 합니다. 체크리스트에서 자세히 안내해 드릴게요.
+            자주 묻는 서류는 {formatList(spotlightDocuments)} 등이고 총 {documentNames.length}개가
+            필요해요. 체크리스트에서 전부 확인할 수 있어요.
           </p>
         ),
       })
@@ -182,13 +176,13 @@ export const ChatbotConversation = ({
         sender: 'assistant',
         content: (
           <p className={styles.body}>
-            궁금한 점은{' '}
+            추가로 물어볼 곳이 필요하면{' '}
             {formatList(
               supportChannels.map((channel) =>
                 channel.contact ? `${channel.name}(${channel.contact})` : channel.name,
               ),
             )}{' '}
-            로 문의할 수 있어요.
+            로 연락해 보세요.
           </p>
         ),
       })
@@ -199,8 +193,7 @@ export const ChatbotConversation = ({
       sender: 'assistant',
       content: (
         <p className={styles.body}>
-          더 자세한 단계와 서류는 아래 버튼으로 확인해 주세요. 다른 민원도 궁금하면 말 걸어주시면
-          돼요!
+          더 궁금한 점이 있으면 계속 물어봐 주세요. 아래 버튼으로 바로 체크리스트도 확인할 수 있어요.
         </p>
       ),
     })
