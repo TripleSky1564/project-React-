@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (parsedProfile?.name && parsedProfile?.phone) setRegisteredProfile(parsedProfile)
       }
 
-      const storedSession = window.localStorage.getItem(SESSION_KEY)
+      const storedSession = window.sessionStorage.getItem(SESSION_KEY)
       if (storedSession) {
         const parsedSession = JSON.parse(storedSession) as UserProfile
         if (parsedSession?.name && parsedSession?.phone) setUser(parsedSession)
@@ -54,17 +54,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const persistRegisteredProfile = useCallback((profile: UserProfile) => {
     if (typeof window === 'undefined') return
     window.localStorage.setItem(REGISTER_KEY, JSON.stringify(profile))
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(profile))
+    window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(profile))
   }, [])
 
   // 로그인 세션만 별도 보관해 로그아웃 시 세션 정보만 지웁니다.
   const persistSession = useCallback((profile: UserProfile | null) => {
     if (typeof window === 'undefined') return
     if (!profile) {
-      window.localStorage.removeItem(SESSION_KEY)
+      window.sessionStorage.removeItem(SESSION_KEY)
       return
     }
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(profile))
+    window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(profile))
   }, [])
 
   const register = useCallback(

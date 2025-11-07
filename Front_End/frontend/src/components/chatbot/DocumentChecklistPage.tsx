@@ -21,6 +21,13 @@ const DocumentChecklistPage = () => {
   const [checked, setChecked] = useState<CheckMap>({})
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // 체크리스트 페이지 진입 시 항상 상단부터 보여준다.
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }
+  }, [])
+
+  useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey)
       if (raw) setChecked(JSON.parse(raw))

@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
+const backendOrigin = process.env.VITE_BACKEND_ORIGIN ?? 'http://localhost:8081'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -17,6 +19,14 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/chatbot/, '/stream-chat'),
       },
+      '/auth': {
+        target: backendOrigin,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: backendOrigin,
+        changeOrigin: true,
+      },
     },
   },
   preview: {
@@ -28,6 +38,14 @@ export default defineConfig({
         target: 'http://49.50.138.5:9500',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/chatbot/, '/stream-chat'),
+      },
+      '/auth': {
+        target: backendOrigin,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: backendOrigin,
+        changeOrigin: true,
       },
     },
   },

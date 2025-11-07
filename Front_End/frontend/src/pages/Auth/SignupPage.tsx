@@ -83,7 +83,7 @@ export const SignupPage = () => {
     }
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if (!name.trim()) {
       setAlert({ type: 'error', text: '이름을 입력해주세요.' })
@@ -105,16 +105,27 @@ export const SignupPage = () => {
     }
 
     setSubmitting(true)
-    // 실제 서비스에서는 서버에 회원 정보를 전달하는 API 요청이 필요합니다.
-    register({ name: name.trim(), phone: normalizedPhone })
-    setAlert({
-      type: 'success',
-      text: '회원가입이 완료되었습니다. 안내 화면으로 이동합니다.',
-    })
+    try {
+      const response = await postJson<{ memberId: string; name: string; phone: string }>(
+        '/api/auth/register',
+        { name: name.trim(), phone: normalizedPhone },
+      )
+      register({ name: response.name, phone: response.phone })
+      setAlert({
+        type: 'success',
+        text: '회원가입이 완료되었습니다. 안내 화면으로 이동합니다.',
+      })
 
-    setTimeout(() => {
-      navigate('/')
-    }, 1000)
+      setTimeout(() => {
+        navigate('/')
+      }, 1000)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '회원가입 중 문제가 발생했습니다. 다시 시도해주세요.'
+      setAlert({ type: 'error', text: message })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
