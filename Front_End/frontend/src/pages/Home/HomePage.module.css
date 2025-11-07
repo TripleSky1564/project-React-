@@ -1,7 +1,6 @@
 .page {
-  padding: var(--space-xxl) var(--space-lg);
-  max-width: 1240px;
-  margin: 0 auto;
+  padding: var(--space-xxl) 0;
+  width: 100%;
 }
 
 .sidebarArea {
@@ -18,9 +17,12 @@
   display: grid;
   gap: calc(var(--space-xxl) * 0.8);
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 1600px;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   align-items: flex-start;
+  padding-right: min(280px, 12vw);
+  box-sizing: border-box;
 }
 
 .sidebar {
@@ -69,7 +71,7 @@
 .heroContent {
   display: grid;
   gap: var(--space-md);
-  max-width: 600px;
+  max-width: 860px;
   width: 100%;
   justify-items: start;
 }
@@ -105,7 +107,7 @@
 
 .description {
   margin: 0 0 var(--space-lg);
-  max-width: 720px;
+  max-width: 920px;
   color: var(--color-neutral-700);
   line-height: 1.6;
 }
@@ -181,6 +183,7 @@
   .layout {
     grid-template-columns: 1fr;
     gap: var(--space-xl);
+    padding-right: 0;
   }
 
   .sidebar {
@@ -205,6 +208,7 @@
     grid-template-columns: 1fr;
     gap: var(--space-xl);
     width: 100%;
+    padding-right: 0;
   }
 
   .sidebar {
